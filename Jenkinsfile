@@ -12,7 +12,7 @@ pipeline {
         stage('GIT') {
             steps {
                 git branch: 'master',
-                    url: 'https://github.com/Therealcydex/timesheetproject'
+                    url: 'https://github.com/Therealcydex/Ahmedwassim_hammouda_4SAE11'
             }
         }
 
