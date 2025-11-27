@@ -9,7 +9,7 @@ pipeline {
         stage('GIT') {
             steps {
                 git branch: 'master',
-                    url: 'git@github.com:Therealcydex/Ahmedwassim_hammouda_4SAE11'
+                    url: 'git@github.com:Therealcydex/Ahmedwassim_hammouda_4SAE11.git'
             }
         }
 
