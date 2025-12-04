@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
+        SONARQUBE_TOKEN = credentials('sonarqube-token') // token SonarQube
     }
 
     stages {
@@ -16,6 +17,17 @@ pipeline {
         stage('Compile Stage') {
             steps {
                 sh 'mvn clean install -DskipTests'
+            }
+        }
+
+        stage('MNN SONARQUBE') {
+            steps {
+                sh '''
+                    mvn sonar:sonar \
+                      -Dsonar.projectKey=Ahmedwassim_4SAE11 \
+                      -Dsonar.host.url=http://<IP_VM_Ubuntu>:9000 \
+                      -Dsonar.login=$SONARQUBE_TOKEN
+                '''
             }
         }
 
