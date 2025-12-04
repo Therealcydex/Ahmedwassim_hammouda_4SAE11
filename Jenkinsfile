@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
-        SONARQUBE_TOKEN = credentials('sonarqube-token')
+        // Note: SonarQube token is handled differently with withSonarQubeEnv
     }
 
     stages {
@@ -16,15 +16,41 @@ pipeline {
 
         stage('Compile Stage') {
             steps {
-                sh 'mvn clean install -DskipTests'
+                sh 'mvn clean compile -DskipTests'
+            }
+        }
+
+        stage('Tests') {
+            steps {
+                sh 'mvn test'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
+                // Method 1: Using withSonarQubeEnv (Recommended)
                 withSonarQubeEnv('sq1') { 
-                    sh 'mvn sonar:sonar'
+                    sh '''
+                        mvn sonar:sonar \
+                            -Dsonar.projectKey=student-management \
+                            -Dsonar.projectName="Student Management"
+                    '''
                 }
+                
+            }
+        }
+
+        stage('Quality Gate Check') {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Build Package') {
+            steps {
+                sh 'mvn package -DskipTests'
             }
         }
 
@@ -38,8 +64,10 @@ pipeline {
             steps {
                 script {
                     def dockerImage = 'wassimhamouda/student-management'
-                    sh "docker build -t $dockerImage ."
-                    sh "docker push $dockerImage"
+                    def dockerTag = "${dockerImage}:${env.BUILD_NUMBER}"
+                    sh "docker build -t $dockerTag -t $dockerImage:latest ."
+                    sh "docker push $dockerTag"
+                    sh "docker push $dockerImage:latest"
                 }
             }
         }
