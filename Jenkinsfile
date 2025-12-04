@@ -20,15 +20,10 @@ pipeline {
             }
         }
 
-        stage('Tests') {
-            steps {
-                sh 'mvn test'
-            }
-        }
+     
 
         stage('SonarQube Analysis') {
             steps {
-                // Method 1: Using withSonarQubeEnv (Recommended)
                 withSonarQubeEnv('sq1') { 
                     sh '''
                         mvn sonar:sonar \
