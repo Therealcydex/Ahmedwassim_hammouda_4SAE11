@@ -20,15 +20,19 @@ pipeline {
             }
         }
 
-        stage('MNN SONARQUBE') {
-            steps {
-                sh '''
-                    mvn sonar:sonar \
-                      -Dsonar.projectKey=Ahmedwassim_4SAE11 \
-                      -Dsonar.host.url=http://<IP_VM_Ubuntu>:9000 \
-                      -Dsonar.login=$SONARQUBE_TOKEN
-                '''
-            }
+     stage('MNN SONARQUBE') {
+    steps {
+        withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+            sh '''
+                mvn sonar:sonar \
+                  -Dsonar.projectKey=Ahmedwassim_4SAE11 \
+                  -Dsonar.host.url=http://<IP_VM_Ubuntu>:9000 \
+                  -Dsonar.login=$SONAR_TOKEN
+            '''
+        }
+    }
+}
+
         }
 
         stage('Login to Docker Hub') {
