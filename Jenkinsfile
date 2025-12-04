@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
-        SONARQUBE_TOKEN = credentials('sonarqube-token') // token SonarQube
+        SONARQUBE_TOKEN = credentials('sonarqube-token')
     }
 
     stages {
@@ -20,16 +20,12 @@ pipeline {
             }
         }
 
- stage('MNN SONARQUBE') {
-    steps {
-        withSonarQubeEnv('sq1') { 
-            sh 'mvn sonar:sonar'
-        }
-    }
-}
-    }
-}
-
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sq1') { 
+                    sh 'mvn sonar:sonar'
+                }
+            }
         }
 
         stage('Login to Docker Hub') {
