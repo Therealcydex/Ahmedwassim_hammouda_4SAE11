@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-     stage('MNN SONARQUBE') {
+    stage('MNN SONARQUBE') {
     steps {
         withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
             sh '''
@@ -30,6 +30,8 @@ pipeline {
                   -Dsonar.login=$SONAR_TOKEN
             '''
         }
+    }
+}
     }
 }
 
