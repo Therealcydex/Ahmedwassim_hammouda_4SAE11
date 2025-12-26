@@ -3,10 +3,10 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
-        // Note: SonarQube token is handled differently with withSonarQubeEnv
     }
 
     stages {
+
         stage('GIT') {
             steps {
                 git branch: 'master',
@@ -20,26 +20,24 @@ pipeline {
             }
         }
 
-     
-
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sq1') { 
+                withSonarQubeEnv('sq1') {
                     sh '''
                         mvn sonar:sonar \
-                            -Dsonar.projectKey=student-management \
-                            -Dsonar.projectName="Student Management"
+                          -Dsonar.projectKey=student-management \
+                          -Dsonar.projectName="Student Management"
                     '''
                 }
-                
             }
         }
 
         stage('Quality Gate Check') {
-  steps {
-    echo "Skipping Quality Gate (webhook issue)"
-  }
-)
+            steps {
+                echo "Skipping Quality Gate (webhook issue)"
+            }
+        }
+
         stage('Build Package') {
             steps {
                 sh 'mvn package -DskipTests'
@@ -57,6 +55,7 @@ pipeline {
                 script {
                     def dockerImage = 'wassimhamouda/student-management'
                     def dockerTag = "${dockerImage}:${env.BUILD_NUMBER}"
+
                     sh "docker build -t $dockerTag -t $dockerImage:latest ."
                     sh "docker push $dockerTag"
                     sh "docker push $dockerImage:latest"
