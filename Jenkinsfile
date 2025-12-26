@@ -62,5 +62,19 @@ pipeline {
                 }
             }
         }
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh '''
+                kubectl apply -f mysql-deployment.yaml -n devops
+                kubectl apply -f spring-secret.yaml -n devops
+                kubectl apply -f spring-config.yaml -n devops
+
+                kubectl set image deployment/spring-app \
+                spring-app=wassimhamouda/student-management:latest \
+                -n devops
+
+                kubectl rollout status deployment/spring-app -n devops
+                '''
+            }
     }
 }
