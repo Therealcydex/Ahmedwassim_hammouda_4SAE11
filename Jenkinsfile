@@ -39,7 +39,7 @@ pipeline {
   steps {
     echo "Skipping Quality Gate (webhook issue)"
   }
-
+)
         stage('Build Package') {
             steps {
                 sh 'mvn package -DskipTests'
