@@ -62,6 +62,7 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
@@ -70,11 +71,12 @@ pipeline {
                 kubectl apply -f spring-config.yaml -n devops
 
                 kubectl set image deployment/spring-app \
-                spring-app=wassimhamouda/student-management:latest \
-                -n devops
+                  spring-app=wassimhamouda/student-management:latest \
+                  -n devops
 
                 kubectl rollout status deployment/spring-app -n devops
                 '''
             }
+        }
     }
 }
